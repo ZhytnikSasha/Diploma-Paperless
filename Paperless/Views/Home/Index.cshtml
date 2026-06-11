@@ -1,0 +1,150 @@
+﻿@model Paperless.Models.ViewModels.DashboardViewModel
+@using Paperless.Models.Enums
+
+@{
+    ViewData["Title"] = "Головна";
+}
+
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <div class="auth-wrap">
+        <div class="row align-items-center g-5 w-100">
+            <div class="col-lg-6 reveal">
+                <div class="eyebrow">Електронний документообіг</div>
+                <h1 style="font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.05;">
+                    Менше паперу.<br>Більше порядку.
+                </h1>
+                <p class="text-secondary fs-5 mt-3 mb-4" style="max-width: 30rem;">
+                    Paperless — система для завантаження, погодження та контролю документів усередині організації.
+                    Кожна зміна статусу фіксується в журналі аудиту.
+                </p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary px-4">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Увійти
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-outline-secondary px-4">
+                        Зареєструватися
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 reveal">
+                <div class="auth-aside" style="border-radius: 24px; min-height: 320px;">
+                    <div class="brand mb-4">Paperless</div>
+                    <div class="feature"><i class="bi bi-cloud-upload"></i><span>Завантаження документів із файлами PDF, Word, Excel</span></div>
+                    <div class="feature"><i class="bi bi-diagram-3"></i><span>Маршрут погодження: чернетка → розгляд → рішення</span></div>
+                    <div class="feature"><i class="bi bi-shield-check"></i><span>Розмежування прав за ролями</span></div>
+                    <div class="feature"><i class="bi bi-clock-history"></i><span>Повний журнал аудиту змін</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="page-head">
+        <div class="eyebrow">Огляд</div>
+        <h1>Дашборд</h1>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg reveal">
+            <div class="stat-tile tone-total">
+                <div class="stat-icon"><i class="bi bi-files"></i></div>
+                <div class="stat-value">@Model.TotalDocuments</div>
+                <div class="stat-label">Усього документів</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg reveal">
+            <div class="stat-tile tone-draft">
+                <div class="stat-icon"><i class="bi bi-pencil-square"></i></div>
+                <div class="stat-value">@Model.DraftDocuments</div>
+                <div class="stat-label">Чернетки</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg reveal">
+            <div class="stat-tile tone-pending">
+                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-value">@Model.PendingDocuments</div>
+                <div class="stat-label">На розгляді</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg reveal">
+            <div class="stat-tile tone-approved">
+                <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+                <div class="stat-value">@Model.ApprovedDocuments</div>
+                <div class="stat-label">Затверджено</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg reveal">
+            <div class="stat-tile tone-rejected">
+                <div class="stat-icon"><i class="bi bi-x-octagon"></i></div>
+                <div class="stat-value">@Model.RejectedDocuments</div>
+                <div class="stat-label">Відхилено</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card reveal mb-5">
+        <div class="card-header pt-4 pb-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h2 class="section-title mb-0"><i class="bi bi-clock text-primary"></i> Останні документи</h2>
+            <a asp-controller="Document" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                Усі документи <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Назва</th>
+                            <th>Автор</th>
+                            <th>Дата</th>
+                            <th class="pe-4">Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.RecentDocuments.Any())
+                        {
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <i class="bi bi-folder-x"></i>
+                                        Документів поки що немає.
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.RecentDocuments)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold">@item.Title</td>
+                                    <td class="text-muted">@item.Author?.FullName</td>
+                                    <td class="text-muted">@item.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td class="pe-4">
+                                        @switch (item.Status)
+                                        {
+                                            case DocumentStatus.Draft:
+                                                <span class="badge bg-secondary"><i class="bi bi-pencil"></i> Чернетка</span>
+                                                break;
+                                            case DocumentStatus.PendingReview:
+                                                <span class="badge bg-warning"><i class="bi bi-hourglass-split"></i> На розгляді</span>
+                                                break;
+                                            case DocumentStatus.Approved:
+                                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Затверджено</span>
+                                                break;
+                                            case DocumentStatus.Rejected:
+                                                <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Відхилено</span>
+                                                break;
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

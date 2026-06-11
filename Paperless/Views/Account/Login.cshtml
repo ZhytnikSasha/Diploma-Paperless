@@ -1,0 +1,75 @@
+﻿@model Paperless.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Вхід у систему";
+}
+
+<div class="auth-wrap">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-9 col-xl-8 reveal">
+            <div class="card auth-card border-0">
+                <div class="row g-0">
+                    <div class="col-md-5 d-none d-md-block">
+                        <div class="auth-aside h-100 d-flex flex-column justify-content-center">
+                            <div class="brand mb-4">Paperless</div>
+                            <p class="fw-bold fs-5 mb-4">Вхід до системи документообігу.</p>
+                            <div class="feature"><i class="bi bi-file-earmark-text"></i><span>Ваші документи</span></div>
+                            <div class="feature"><i class="bi bi-diagram-3"></i><span>Погодження та статуси</span></div>
+                            <div class="feature"><i class="bi bi-clock-history"></i><span>Журнал змін</span></div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body p-4 p-lg-5">
+                            <h1 class="h3 mb-1">Раді вас бачити</h1>
+                            <p class="text-muted mb-4">Увійдіть, щоб продовжити роботу.</p>
+
+                            <form asp-action="Login" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label fw-bold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                        <input asp-for="Email" class="form-control" placeholder="example@organization.com" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Password" class="form-label fw-bold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                        <input asp-for="Password" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-check mb-4">
+                                    <input asp-for="RememberMe" class="form-check-input" />
+                                    <label asp-for="RememberMe" class="form-check-label"></label>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i> Увійти
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="mt-4 text-center text-muted">
+                                Ще не маєте акаунту?
+                                <a asp-action="Register" class="fw-bold">Зареєструватися</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

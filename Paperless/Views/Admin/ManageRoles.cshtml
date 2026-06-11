@@ -1,0 +1,44 @@
+﻿@model List<Paperless.Models.ViewModels.ManageUserRolesViewModel>
+
+@{
+    ViewData["Title"] = "Налаштування ролей";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-lg-6 reveal">
+        <div class="page-head">
+            <div class="eyebrow text-danger">Адміністрування</div>
+            <h1><i class="bi bi-shield-lock text-danger me-2"></i>Ролі користувача</h1>
+        </div>
+
+        <div class="card">
+            <div class="card-header pt-4 pb-3 px-4">
+                <span class="text-muted">Користувач:</span>
+                <span class="fw-bold text-primary">@ViewBag.UserName</span>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <input type="hidden" name="userId" value="@ViewBag.userId" />
+
+                    <div class="mb-4">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <div class="form-check fs-5 mb-2 p-3 rounded d-flex align-items-center" style="background: var(--surface-soft); border: 1px solid var(--line-soft); padding-left: 2.6rem !important;">
+                                <input type="hidden" asp-for="@Model[i].RoleName" />
+                                <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+                                <label class="form-check-label fw-bold" asp-for="@Model[i].IsSelected">
+                                    @Model[i].RoleName
+                                </label>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Скасувати</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check2 me-1"></i> Зберегти ролі</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

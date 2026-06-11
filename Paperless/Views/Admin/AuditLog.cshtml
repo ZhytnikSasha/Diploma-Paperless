@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Paperless.Models.DocumentHistory>
+@using Paperless.Models.Enums
+
+@{
+    ViewData["Title"] = "Журнал аудиту";
+}
+
+<div class="page-head">
+    <div class="eyebrow text-danger">Адміністрування</div>
+    <h1><i class="bi bi-clock-history text-danger me-2"></i>Журнал аудиту</h1>
+</div>
+
+<div class="card reveal mb-5">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Дата та час</th>
+                        <th>Документ</th>
+                        <th>Користувач</th>
+                        <th class="pe-4">Зміна статусу</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="bi bi-clipboard-x"></i>
+                                    Історія змін порожня.
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 text-muted small">@log.ChangedAt.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                <td class="fw-bold">
+                                    @log.DocumentTitle
+                                    @if (log.DocumentId == null)
+                                    {
+                                        <span class="badge bg-light ms-2" title="Документ фізично видалено з системи">
+                                            <i class="bi bi-trash3"></i> Видалено
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="fw-bold"><i class="bi bi-person-badge text-primary me-1"></i>@(log.User?.FullName ?? "Невідомий")</span>
+                                </td>
+                                <td class="pe-4">
+                                    @if (log.OldStatus != null)
+                                    {
+                                        @switch (log.OldStatus)
+                                        {
+                                            case DocumentStatus.Draft:
+                                                <span class="badge bg-secondary">Чернетка</span>
+                                                break;
+                                            case DocumentStatus.PendingReview:
+                                                <span class="badge bg-warning">На розгляді</span>
+                                                break;
+                                            case DocumentStatus.Approved:
+                                                <span class="badge bg-success">Затверджено</span>
+                                                break;
+                                            case DocumentStatus.Rejected:
+                                                <span class="badge bg-danger">Відхилено</span>
+                                                break;
+                                            case DocumentStatus.Deleted:
+                                                <span class="badge bg-dark">Видалено</span>
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">Новий документ</span>
+                                    }
+
+                                    <i class="bi bi-arrow-right mx-2 text-muted"></i>
+
+                                    @switch (log.NewStatus)
+                                    {
+                                        case DocumentStatus.Draft:
+                                            <span class="badge bg-secondary">Чернетка</span>
+                                            break;
+                                        case DocumentStatus.PendingReview:
+                                            <span class="badge bg-warning">На розгляді</span>
+                                            break;
+                                        case DocumentStatus.Approved:
+                                            <span class="badge bg-success">Затверджено</span>
+                                            break;
+                                        case DocumentStatus.Rejected:
+                                            <span class="badge bg-danger">Відхилено</span>
+                                            break;
+                                        case DocumentStatus.Deleted:
+                                            <span class="badge bg-dark">Видалено</span>
+                                            break;
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

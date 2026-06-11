@@ -1,0 +1,75 @@
+﻿@model Paperless.Models.Document
+
+@{
+    ViewData["Title"] = "Створити документ";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-lg-8 reveal">
+        <div class="page-head">
+            <div class="eyebrow">Документообіг</div>
+            <h1><i class="bi bi-file-earmark-plus text-primary me-2"></i>@ViewData["Title"]</h1>
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4 p-lg-5">
+                <form asp-action="Create" enctype="multipart/form-data" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-bold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Наприклад: Звіт за червень" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-bold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Короткий опис змісту…"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4 p-3 rounded" style="background: var(--surface-soft); border: 1px dashed var(--line);">
+                        <label class="form-label fw-bold"><i class="bi bi-paperclip me-1"></i> Прикріпити файл (опціонально)</label>
+                        <input type="file" name="uploadedFile" class="form-control"
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.rtf" />
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i> Дозволені формати: PDF, DOC, DOCX, XLS, XLSX, TXT, RTF. Максимальний розмір: 10 МБ.
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Скасувати
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check2 me-1"></i> Зберегти документ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var fileInput = document.querySelector('input[type="file"][name="uploadedFile"]');
+            if (fileInput) {
+                fileInput.addEventListener('change', function (e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var allowedExtensions = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx|\.txt|\.rtf)$/i;
+                    if (!allowedExtensions.exec(file.name)) {
+                        alert('Помилка: Недопустимий формат файлу. Будь ласка, оберіть документ (PDF, Word, Excel, TXT).');
+                        fileInput.value = '';
+                        return false;
+                    }
+                });
+            }
+        });
+    </script>
+}

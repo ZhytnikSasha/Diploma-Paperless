@@ -1,0 +1,245 @@
+﻿@model Paperless.Models.ViewModels.UserProfileViewModel
+
+@{
+    ViewData["Title"] = "Особистий профіль";
+}
+
+<div class="page-head">
+    <div class="eyebrow">Обліковий запис</div>
+    <h1>Особистий профіль</h1>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" id="valSummary"></div>
+
+<div class="row g-4">
+    <div class="col-lg-4 reveal">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                {
+                    <img src="@Model.AvatarPath" class="avatar-xl mb-3" alt="Аватар" />
+                }
+                else
+                {
+                    <div class="avatar-xl-fallback mb-3 mx-auto">
+                        @(($"{(Model.LastName.Length > 0 ? Model.LastName[0].ToString() : "")}{(Model.FirstName.Length > 0 ? Model.FirstName[0].ToString() : "")}"))
+                    </div>
+                }
+                <h4 class="fw-bold mb-1">@Model.FirstName @Model.LastName</h4>
+                <p class="text-muted mb-3">@Model.Email</p>
+                <span class="badge bg-primary">@Model.Role</span>
+
+                <hr class="divider-soft my-4">
+
+                <div class="text-start small">
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted">Посада</span>
+                        <span class="fw-bold text-end">@(string.IsNullOrEmpty(Model.Position) ? "—" : Model.Position)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted">Відділ</span>
+                        <span class="fw-bold text-end">@(string.IsNullOrEmpty(Model.Department) ? "—" : Model.Department)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted">ID</span>
+                        <span class="text-muted" style="font-family: monospace;">@Model.Id.Substring(0, 8)…</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 reveal">
+        <div class="card h-100">
+            <div class="card-header pt-4 pb-3 px-4">
+                <h2 class="section-title mb-0"><i class="bi bi-sliders text-primary"></i> Налаштування профілю</h2>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Email" />
+                    <input type="hidden" asp-for="Role" />
+                    <input type="hidden" asp-for="AvatarPath" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="AvatarFile" class="form-label fw-bold"></label>
+                        <div class="d-flex align-items-center gap-3">
+                            @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                            {
+                                <img src="@Model.AvatarPath" id="avatarPreview" class="nav-avatar" style="width:52px;height:52px;" alt="" />
+                            }
+                            else
+                            {
+                                <span id="avatarPreviewFallback" class="nav-avatar-fallback" style="width:52px;height:52px;font-size:1rem;">
+                                    @(($"{(Model.LastName.Length > 0 ? Model.LastName[0].ToString() : "")}{(Model.FirstName.Length > 0 ? Model.FirstName[0].ToString() : "")}"))
+                                </span>
+                                <img src="" id="avatarPreview" class="nav-avatar d-none" style="width:52px;height:52px;" alt="" />
+                            }
+                            <input asp-for="AvatarFile" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" id="avatarInput" />
+                        </div>
+                        <small class="text-muted d-block mt-1"><i class="bi bi-info-circle me-1"></i> PNG, JPG або WEBP.</small>
+                    </div>
+
+                    <hr class="divider-soft mb-4">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label fw-bold"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label fw-bold"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Department" class="form-label fw-bold"></label>
+                            <input asp-for="Department" class="form-control" placeholder="Наприклад: Бухгалтерія" />
+                            <span asp-validation-for="Department" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Position" class="form-label fw-bold"></label>
+                            <input asp-for="Position" class="form-control" placeholder="Наприклад: Головний спеціаліст" />
+                            <span asp-validation-for="Position" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded mb-3" style="background: var(--surface-soft); border: 1px solid var(--line-soft);">
+                        <div class="section-title mb-1" style="font-size:.95rem;"><i class="bi bi-key text-primary"></i> Зміна пароля</div>
+                        <p class="text-muted small mb-3">Заповніть обидва поля, лише якщо хочете змінити пароль.</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label asp-for="CurrentPassword" class="form-label fw-bold"></label>
+                                <input asp-for="CurrentPassword" class="form-control" autocomplete="current-password" />
+                                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="NewPassword" class="form-label fw-bold"></label>
+                                <input asp-for="NewPassword" class="form-control" autocomplete="new-password" />
+                                <span asp-validation-for="NewPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end border-top pt-3">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check2 me-1"></i> Зберегти зміни
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4 mb-5 reveal">
+    <div class="card-header pt-4 pb-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="section-title mb-0"><i class="bi bi-folder2-open text-primary"></i> Мої документи</h2>
+        <a asp-controller="Document" asp-action="Create" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus-lg me-1"></i> Створити новий
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Назва документа</th>
+                        <th>Дата створення</th>
+                        <th>Статус</th>
+                        <th class="text-center pe-4">Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.MyDocuments.Any())
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="bi bi-file-earmark-x"></i>
+                                    Ви ще не створили жодного документа.
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var doc in Model.MyDocuments)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold">@doc.Title</td>
+                                <td class="text-muted">@doc.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>
+                                    @switch (doc.Status)
+                                    {
+                                        case Paperless.Models.Enums.DocumentStatus.Draft:
+                                            <span class="badge bg-secondary"><i class="bi bi-pencil"></i> Чернетка</span>
+                                            break;
+                                        case Paperless.Models.Enums.DocumentStatus.PendingReview:
+                                            <span class="badge bg-warning"><i class="bi bi-hourglass-split"></i> На розгляді</span>
+                                            break;
+                                        case Paperless.Models.Enums.DocumentStatus.Approved:
+                                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Затверджено</span>
+                                            break;
+                                        case Paperless.Models.Enums.DocumentStatus.Rejected:
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Відхилено</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="text-center pe-4">
+                                    <div class="btn-group">
+                                        @if (!string.IsNullOrEmpty(doc.FilePath))
+                                        {
+                                            <a asp-controller="Document" asp-action="Download" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary" title="Завантажити">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                        }
+                                        <a asp-controller="Document" asp-action="Edit" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-secondary" title="Редагувати">
+                                            <i class="bi bi-pencil"></i> Ред.
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var input = document.getElementById('avatarInput');
+            var preview = document.getElementById('avatarPreview');
+            var fallback = document.getElementById('avatarPreviewFallback');
+            if (input) {
+                input.addEventListener('change', function (e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var url = URL.createObjectURL(file);
+                    if (preview) { preview.src = url; preview.classList.remove('d-none'); }
+                    if (fallback) { fallback.classList.add('d-none'); }
+                });
+            }
+        });
+    </script>
+}

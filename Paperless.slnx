@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Paperless.Tests/Paperless.Tests.csproj" Id="d5885689-ec51-4f66-b37c-037b7ef981e9" />
+  <Project Path="Paperless/Paperless.csproj" />
+</Solution>
