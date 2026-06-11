@@ -30,7 +30,7 @@
 
 ### 2. Клонування репозиторію
 ```bash
-git clone [https://github.com/ZhytnikSasha/Diploma-Paperless.git](https://github.com/ZhytnikSasha/Diploma-Paperless.git)
+git clone [https://github.com/ZhytnikSasha/Diploma-Paperless.git]
 cd Paperless
 ```
 
